@@ -43,7 +43,7 @@ Before coding, read:
   - [~] in progress
   - [x] done
 - Keep diffs small. Add tests for behavior changes.
-- After implementing a task do not forget to update `README.md`, and when the change affects navigation or architecture also update `docs/technical_overview.md` and `docs/roadmap.md`.
+- After implementing a task do not forget to update in Russian `README.md`, and when the change affects navigation or architecture also update `docs/technical_overview.md` and `docs/roadmap.md`.
 
 ## Subagents policy
 Default to a single agent.
@@ -68,7 +68,7 @@ For large features or refactors, create or update PLANS.md before implementation
 
 ## Critical rules:
 - The code MUST be well structured, human readable, and comply with PEP8 requirements.
-- Use detailed comments in the code (docstrings)
+- Use detailed comments in the code (docstrings) in Russian
 
 ## Testing routine after current task is done:
 - Use syntax and linter checking for all created/modified files
@@ -76,7 +76,7 @@ For large features or refactors, create or update PLANS.md before implementation
 
 ## Output format
 - Plan -> patch-style changes -> commands to run.
-- Answer in Russian.
+- Answer, write comments and docs in Russian
 
 ## Project-specific working agreements
 - For every meaningful behavior change, create or update a dedicated OpenSpec change in `openspec/changes/<number-change-id>/`.
