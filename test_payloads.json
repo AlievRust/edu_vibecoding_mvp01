@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Ирина",
+    "contact": "+79990000000",
+    "source": "landing",
+    "comment": "Хочу консультацию по тарифам"
+  },
+  {
+    "name": "ирина",
+    "contact": "8 (999) 000-00-00",
+    "source": "social",
+    "comment": "Дубль по имени и телефону"
+  },
+  {
+    "name": "Олег",
+    "contact": "9991112233",
+    "source": "vk",
+    "comment": "Интересует пробный урок"
+  },
+  {
+    "name": "Мария",
+    "contact": "79992223344",
+    "source": "telegram",
+    "comment": "Нужна консультация завтра"
+  },
+  {
+    "name": "Анна",
+    "contact": "+7 912 345-67-89",
+    "source": "spreadsheet",
+    "comment": ""
+  },
+  {
+    "name": "Павел",
+    "contact": "",
+    "source": "landing",
+    "comment": "Некорректный payload: пустой contact"
+  },
+  {
+    "name": "Сергей",
+    "contact": "+123",
+    "source": "landing",
+    "comment": "Некорректный payload: не российский номер"
+  }
+]
