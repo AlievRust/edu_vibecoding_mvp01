@@ -41,6 +41,7 @@ def test_post_lead_saves_new_lead(tmp_path: Path) -> None:
         )
 
     assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json; charset=utf-8"
     assert response.json() == {
         "id": 1,
         "created": True,

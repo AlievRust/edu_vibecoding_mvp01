@@ -29,16 +29,18 @@ Copy-Item .env.example .env
 ## Пример запроса
 
 ```powershell
+$body = @{
+  name = "Ирина"
+  contact = "+79990000000"
+  source = "landing"
+  comment = "Хочу консультацию по тарифам"
+} | ConvertTo-Json -Compress
+
 Invoke-RestMethod `
   -Method Post `
-  -Uri http://127.0.0.1:8000/lead `
-  -ContentType 'application/json' `
-  -Body '{
-    "name": "Ирина",
-    "contact": "+79990000000",
-    "source": "landing",
-    "comment": "Хочу консультацию по тарифам"
-  }'
+  -Uri "http://127.0.0.1:8000/lead" `
+  -ContentType "application/json; charset=utf-8" `
+  -Body ([System.Text.Encoding]::UTF8.GetBytes($body))
 ```
 
 Успешный ответ:
@@ -87,7 +89,9 @@ SMTP_USE_TLS=true
 
 Для проверки в стиле `curl -s ... | jq` смотри
 `docs/manual_requests.md`. В Windows PowerShell лучше вызывать `curl.exe`,
-чтобы не попасть в alias PowerShell для `Invoke-WebRequest`.
+чтобы не попасть в alias PowerShell для `Invoke-WebRequest`. Для кириллицы в
+PowerShell используй вариант из документации с UTF-8 файлом и
+`--data-binary "@payload.json"`.
 
 ## Проверки
 

@@ -23,6 +23,12 @@ from app.logging_config import write_event
 from app.models import LeadRequest, LeadResponse
 
 
+class UTF8JSONResponse(JSONResponse):
+    """JSON-ответ с явным UTF-8 charset для старых клиентов Windows."""
+
+    media_type = "application/json; charset=utf-8"
+
+
 def create_app(settings: Settings | None = None) -> FastAPI:
     """Создает приложение и привязывает настройки к `app.state`."""
 
@@ -36,15 +42,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         description="Учебный сервис для приема и сохранения заявок.",
         version="0.1.0",
         lifespan=lifespan,
+        default_response_class=UTF8JSONResponse,
     )
 
     @application.exception_handler(RequestValidationError)
     async def validation_error_handler(
         request: Request,
         exc: RequestValidationError,
-    ) -> JSONResponse:
+    ) -> UTF8JSONResponse:
         """Возвращает HTTP 400 вместо стандартного 422 для ошибок запроса."""
-        return JSONResponse(
+        return UTF8JSONResponse(
             status_code=400,
             content=jsonable_encoder({
                 "detail": "Некорректный JSON или обязательные поля заявки.",
@@ -56,7 +63,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def create_lead(
         lead: LeadRequest,
         request: Request,
-    ) -> LeadResponse | JSONResponse:
+    ) -> LeadResponse | UTF8JSONResponse:
         """Принимает заявку, сохраняет ее и уведомляет менеджера."""
         current_settings: Settings = request.app.state.settings
 
@@ -64,7 +71,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             normalized_name = normalize_name(lead.name)
             normalized_contact = normalize_phone(lead.contact)
         except PhoneNormalizationError as exc:
-            return JSONResponse(
+            return UTF8JSONResponse(
                 status_code=400,
                 content={"detail": str(exc)},
             )
@@ -82,7 +89,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 current_settings.events_log_path,
                 f"Database error while saving lead: {exc}",
             )
-            return JSONResponse(
+            return UTF8JSONResponse(
                 status_code=500,
                 content={"detail": "База данных временно недоступна."},
             )
