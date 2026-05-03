@@ -1,51 +1,90 @@
-# AGENTS.md — OpenSpec workflow
+# AGENTS.md — OpenSpec Workflow
 
-## Tech proposal first
-When the user provides a project idea or feature request in plain language:
-1) Propose 2–3 implementation options (tech stack).
-2) For each option, list:
-   - dependencies (pyproject.toml)
-   - pros/cons
+> This file is an instruction for the agent. Follow it exactly and in order.
+
+---
+
+## 1. Prime directive: spec-first
+
+**Core rule:** the source of truth is OpenSpec documents in this repository, not your assumptions.
+
+Never guess if the answer should be in the spec. If the spec has no answer — **stop and ask**.
+
+---
+
+## 2. When the user describes an idea (tech proposal)
+
+If the task is described in free form without a technical solution:
+
+1. Propose 2–3 implementation options (tech stack).
+2. For each option list:
+   - dependencies (pyproject.toml or equivalent)
+   - pros and cons
    - risks
-3) Ask any missing questions.
-Do not write code until one option is selected.
+3. Ask clarifying questions if anything is missing.
 
-## Prime directive
-Work spec-first. The source of truth is OpenSpec documents in this repository.
+**Do not write code until the user has selected an option.**
 
-## Agent entrypoint
-When starting work in this repository, read documents in this order (if exists):
-1. `README.md` - entry point, quick start, and navigation.
-2. `docs/technical_overview.md` - architecture, and constraints.
-3. `docs/changelog.md` - behavior history and recent project changes.
-4. `docs/roadmap.md` - forward-looking direction, if the task touches planning.
-5. `openspec/project.md` - project-wide OpenSpec rules.
-6. `openspec/changes/<change-id>/proposal.md`, `design.md`, `tasks.md` - active change source of truth.
-7. `openspec/archive/README.md` - closed specs and historical context.
+---
 
-## Always read first
-You can write code only after the user's direct command.
-Before coding, read:
-- `openspec/project.md`
-- the active change docs in `openspec/changes/<number-change-id>/`:
-  - `proposal.md`
-  - `design.md`
-  - `tasks.md`
+## 3. File reading order at startup
 
-## Do not code until
-- User give you a command
-- Requirements and tasks checklist exist.
-- If unclear: ask questions or update proposal/design first.
+Read documents in this order (if the file exists):
 
-## Execution protocol
-- Implement tasks top-to-bottom.
-- Mark tasks in tasks.md:
-  - [~] in progress
-  - [x] done
-- Keep diffs small. Add tests for behavior changes.
-- After implementing a task do not forget to update in Russian `README.md`, and when the change affects navigation or architecture also update `docs/technical_overview.md` and `docs/roadmap.md`.
+1. `README.md` — entry point, quick start, navigation.
+2. `docs/technical_overview.md` — architecture and constraints.
+3. `docs/changelog.md` — behavior change history.
+4. `docs/roadmap.md` — forward direction (read if the task touches planning).
+5. `openspec/project.md` — project-wide rules, constraints, and goals.
+6. `openspec/changes/<change-id>/proposal.md`, `design.md`, `tasks.md` — source of truth for the active change.
+7. `openspec/archive/README.md` — closed specs and historical context.
 
-## Subagents policy
+---
+
+## 4. Conditions to start coding
+
+Do not write code until **all** conditions are met:
+
+- [ ] User has explicitly given the command to start implementation.
+- [ ] `tasks.md` with a task checklist exists.
+- [ ] `design.md` contains answers to all technical questions.
+- [ ] All ambiguities are resolved — by asking the user or updating proposal/design.
+
+---
+
+## 5. When to stop and ask
+
+**Stop and ask the user** if:
+
+- `design.md` has no explicit answer to a technical question.
+- The task requires choosing between two equally valid solutions.
+- The change affects behavior not described in the spec.
+- It is unclear whether something is in scope for the current change.
+
+**Do not make architectural decisions on your own.** Guessing causes spec drift.
+
+---
+
+## 6. Task execution protocol
+
+- Implement tasks top-to-bottom following `tasks.md`.
+- Update task status in `tasks.md` as you work:
+  - `[~]` — in progress
+  - `[x]` — done
+- Keep diffs small. One task — one logical commit.
+- Add tests for any behavior change.
+- After each task update documentation (see section 9).
+
+---
+
+## 7. Planning
+
+For large features or refactors: create or update `PLANS.md` **before** starting implementation.
+
+---
+
+## 8. Subagents policy
+
 Default to a single agent.
 
 Use subagents only for bounded parallel tasks:
@@ -58,38 +97,49 @@ Avoid subagents for:
 - small fixes
 - overlapping edits
 - refactors touching shared files
-- tasks where coordination cost exceeds benefit
 
-Unless I explicitly ask otherwise, use no more than 2 subagents.
+No more than 2 subagents at a time unless the user asks otherwise.
 Return concise summaries, not raw logs.
 
-## Planning
-For large features or refactors, create or update PLANS.md before implementation.
+---
 
-## Critical rules:
-- The code MUST be well structured, human readable, and comply with PEP8 requirements.
-- Use detailed comments in the code (docstrings) in Russian
+## 9. Documentation update after a task
 
-## Testing routine after current task is done:
-- Use syntax and linter checking for all created/modified files
-- Offer/create testing commands or utils after current task is done for testing basic functioning
+After implementing a task, check and update (if needed):
 
-## Output format
-- Plan -> patch-style changes -> commands to run.
-- Answer, write comments and docs in Russian
+- `README.md` — always
+- `docs/technical_overview.md` — if architecture or navigation changed
+- `docs/roadmap.md` — if planning is affected
+- `docs/changelog.md` — always when observable behavior changes
+- `openspec/project.md` — if project-wide rules or entrypoints changed
 
-## Project-specific working agreements
-- For every meaningful behavior change, create or update a dedicated OpenSpec change in `openspec/changes/<number-change-id>/`.
-- Even small operational fixes should be reflected in OpenSpec if they change observable behavior, logging, configuration, or runtime format.
-- After implementation, update all relevant project docs, not only `README.md`. By default check:
-  - `README.md`
-  - `docs/technical_overview.md`
-  - `docs/roadmap.md`
-  - `docs/changelog.md`
-  - `openspec/project.md` when project-wide behavior or preferred entrypoints changed
-- Logs must be UTF-8 so Cyrillic text is displayed correctly.
-- When diagnosing runtime issues, verify the actual interpreter and environment used by the user, not only the source code.
-- If full end-to-end verification was not performed because external systems are involved, state that explicitly as an environment limitation.
-- Treat operational log readability as part of the user-facing interface, not as an internal-only concern.
-- Do not remove historical artifacts such as notebooks or legacy logs unless the user explicitly requests cleanup.
-- When fixing Cyrillic or encoding regressions, verify the real file contents, not only terminal rendering.
+---
+
+## 10. Code requirements
+
+- Code must be readable, structured, and PEP8-compliant.
+- Docstrings and inline comments — in Russian.
+- Every observable behavior change must be reflected in OpenSpec.
+
+---
+
+## 11. Testing after a task
+
+- Run syntax check and linter on all created/modified files.
+- Provide commands for manual verification of basic functionality.
+
+---
+
+## 12. Response format
+
+- Structure: **plan → patch-style changes → commands to run**.
+- Answers, comments, and documentation — in Russian.
+
+---
+
+## 13. Project working agreements
+
+- For every meaningful behavior change, create or update an OpenSpec change in `openspec/changes/<number-change-id>/`.
+- Reflect even small operational fixes in OpenSpec if they change observable behavior, logging, configuration, or data format.
+- If full end-to-end verification is impossible due to external systems — state that explicitly as an environment limitation.
+- Do not delete historical artifacts (logs, notebooks, etc.) unless the user explicitly requests cleanup.
